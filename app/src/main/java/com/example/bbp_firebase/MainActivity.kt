@@ -11,6 +11,8 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -39,10 +41,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.getId()) {
             R.id.save -> {
-                // Statement program untuk simpan data
+
+                val getUserID = auth!!.currentUser!!.uid
+                val database = FirebaseDatabase.getInstance()
+                val getNIM: String = binding.nim.getText().toString()
+                val getNama: String = binding.nama.getText().toString()
+                val getJurusan: String = binding.jurusan.getText().toString()
+                val getReference: DatabaseReference
+                getReference = database.reference
+                if (isEmpty(getNIM) || isEmpty(getNama) || isEmpty(getJurusan)) {
+                    Toast.makeText(this@MainActivity, "Data tidak boleh ada yang kosong",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+
+                    getReference.child("Admin").child(getUserID).child("Mahasiswa").push()
+                        .setValue(data_mahasiswa(getNIM, getNama, getJurusan))
+                        .addOnCompleteListener(this) {
+                                    binding.nim.setText("")
+                            binding.nama.setText("")
+                            binding.jurusan.setText("")
+                            Toast.makeText(this@MainActivity, "Data Tersimpan",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                }
             }
             R.id.logout ->
-                // Statement program untuk logout/keluar
                 AuthUI.getInstance()
                     .signOut(this)
                     .addOnCompleteListener(object : OnCompleteListener<Void> {
