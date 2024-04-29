@@ -19,12 +19,14 @@ class RecyclerViewAdapter( private val listMahasiswa: ArrayList<data_mahasiswa>,
                            context: Context) :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
     private val context: Context
+
     //ViewHolder Digunakan Untuk Menyimpan Referensi Dari View-View
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val NIM: TextView
         val Nama: TextView
         val Jurusan: TextView
         val ListItem: LinearLayout
+
         init {//Menginisialisasi View yang terpasang pada layout RecyclerView kita
             NIM = itemView.findViewById(R.id.nimx)
             Nama = itemView.findViewById(R.id.namax)
@@ -32,12 +34,15 @@ class RecyclerViewAdapter( private val listMahasiswa: ArrayList<data_mahasiswa>,
             ListItem = itemView.findViewById(R.id.list_item)
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 //Membuat View untuk Menyiapkan & Memasang Layout yang digunakan pada RecyclerView
         val V: View = LayoutInflater.from(parent.getContext()).inflate(
-            R.layout.view_design, parent, false)
+            R.layout.view_design, parent, false
+        )
         return ViewHolder(V)
     }
+
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //Mengambil Nilai/Value pada RecyclerView berdasarkan Posisi Tertentu
@@ -68,7 +73,10 @@ class RecyclerViewAdapter( private val listMahasiswa: ArrayList<data_mahasiswa>,
                                 intent.putExtras(bundle)
                                 context.startActivity(intent)
                             }
+
                             1 -> {
+//Menggunakan interface untuk mengirim data mahasiswa, yang akan dihapus
+                                listener?.onDeleteData(listMahasiswa.get(position), position)
                             }
                         }
                     })
@@ -80,12 +88,23 @@ class RecyclerViewAdapter( private val listMahasiswa: ArrayList<data_mahasiswa>,
             }
         })
     }
+
     override fun getItemCount(): Int {
         //Menghitung Ukuran/Jumlah Data Yang Akan Ditampilkan Pada RecyclerView
         return listMahasiswa.size
     }
+
+    //Membuat Interfece
+    interface dataListener {
+        fun onDeleteData(data: data_mahasiswa?, position: Int)
+    }
+
+    //Deklarasi objek dari Interfece
+    var listener: dataListener? = null
+
     //Membuat Konstruktor, untuk menerima input dari Database
     init {
         this.context = context
+        this.listener = context as MyListData //menambahkan baris ini saja
     }
 }

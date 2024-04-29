@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class MyListData : AppCompatActivity() {
+class MyListData : AppCompatActivity(), RecyclerViewAdapter.dataListener {
     private lateinit var binding: ActivityMyListDataBinding
     //Deklarasi Variable untuk RecyclerView
     private var recyclerView: RecyclerView? = null
@@ -88,4 +88,29 @@ class MyListData : AppCompatActivity() {
             R.drawable.line)!!)
         recyclerView?.addItemDecoration(itemDecoration)
     }
-}
+
+    override fun onDeleteData(data: data_mahasiswa?, position: Int) {
+            /* Kode ini akan dipanggil ketika method onDeleteData dipanggil dari adapter pada
+            RecyclerView
+            * melalui interface. kemudian akan menghapus data berdasarkan primary key dari data
+            tersebut
+            * Jika berhasil, maka akan memunculkan Toast */
+            val getUserID: String = auth?.getCurrentUser()?.getUid().toString()
+            val getReference = database.getReference()
+            if(getReference != null){
+                getReference.child("Admin")
+                    .child(getUserID)
+                    .child("Mahasiswa")
+                    .child(data?.key.toString())
+                    .removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(this@MyListData, "Data Berhasil Dihapus",
+                            Toast.LENGTH_SHORT).show();
+                    }
+            } else
+            {
+                Toast.makeText(this@MyListData, "Referance Kosong",
+                    Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
