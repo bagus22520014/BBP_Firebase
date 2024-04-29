@@ -47,6 +47,7 @@ class MyListData : AppCompatActivity() {
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
+                        dataMahasiswa.clear()
                         for (snapshot in dataSnapshot.children) {
                             //Mapping data pada DataSnapshot ke dalam objek mahasiswa
                             val mahasiswa =
